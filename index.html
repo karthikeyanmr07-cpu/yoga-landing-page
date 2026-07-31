@@ -56,6 +56,17 @@ body.trial-open{overflow:hidden}
 <!-- ============ HERO ============ -->
 <header class="hero">
   <img class="hero-video" src="assets/hero-still.min.jpg" alt="">
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide is-active" data-slide="0">
+      <video class="hero-media" src="assets/videos/hero-slide-1.mp4" muted playsinline preload="auto"></video>
+    </div>
+    <div class="hero-slide" data-slide="1">
+      <video class="hero-media" src="assets/videos/hero-slide-2.mp4" muted playsinline preload="metadata"></video>
+    </div>
+    <div class="hero-slide" data-slide="2">
+      <video class="hero-media" src="assets/videos/hero-slide-3.mp4" muted playsinline preload="metadata"></video>
+    </div>
+  </div>
   <div class="hero-scrim"></div>
   <nav class="nav reveal" id="nav" aria-label="Primary">
     <img src="assets/logo-header.png" alt="Jovens Yoga">
@@ -72,8 +83,10 @@ body.trial-open{overflow:hidden}
     <img src="assets/users-avatars.png" alt="Member avatars">
     <span><strong>4.8/5</strong> from 100+ members</span>
   </div>
-  <div class="hero-dots" aria-hidden="true">
-    <span class="dot-active"></span><span></span><span></span>
+  <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero video slides">
+    <button type="button" class="dot dot-active" data-slide="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
+    <button type="button" class="dot" data-slide="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
+    <button type="button" class="dot" data-slide="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
   </div>
 </header>
 
@@ -429,6 +442,47 @@ body.trial-open{overflow:hidden}
 </section>
 
 <script>
+// Hero video slider: auto-advances when each slide's video finishes, loops, dots are clickable
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.hero-slide'));
+  var dots=[].slice.call(document.querySelectorAll('#heroDots .dot'));
+  if(!slides.length)return;
+  var current=0,fallback=null;
+  var videos=slides.map(function(s){return s.querySelector('video')});
+  function clearFallback(){if(fallback){clearTimeout(fallback);fallback=null}}
+  function armFallback(v){
+    clearFallback();
+    var dur=(v&&v.duration&&isFinite(v.duration))?v.duration*1000+800:8000;
+    fallback=setTimeout(next,dur);
+  }
+  function goTo(i){
+    var prevIdx=current;
+    slides[prevIdx].classList.remove('is-active');
+    if(dots[prevIdx]){dots[prevIdx].classList.remove('dot-active');dots[prevIdx].setAttribute('aria-selected','false')}
+    var pv=videos[prevIdx];
+    if(pv){pv.pause();pv.currentTime=0}
+    current=(i+slides.length)%slides.length;
+    slides[current].classList.add('is-active');
+    if(dots[current]){dots[current].classList.add('dot-active');dots[current].setAttribute('aria-selected','true')}
+    var nv=videos[current];
+    if(nv){
+      var playPromise=nv.play();
+      if(playPromise&&playPromise.catch)playPromise.catch(function(){});
+      armFallback(nv);
+    }else{
+      armFallback(null);
+    }
+  }
+  function next(){goTo(current+1)}
+  videos.forEach(function(v,i){
+    if(!v)return;
+    v.addEventListener('ended',function(){if(i===current){clearFallback();next()}});
+  });
+  dots.forEach(function(d,i){
+    d.addEventListener('click',function(){if(i!==current)goTo(i)});
+  });
+  goTo(0);
+})();
 // Scroll reveal for instructor cards (staggered)
 (function(){
   var els=document.querySelectorAll('.reveal');
