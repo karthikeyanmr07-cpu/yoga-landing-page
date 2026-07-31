@@ -1,0 +1,14 @@
+:root{
+--shadow-card:4px 4px 21.9px rgba(0,0,0,0.05);
+--shadow-card-inset:inset 0 0 0 1px rgba(255,255,255,0.9);
+--shadow-pricing-panel:0px 54px 90px 0px rgba(255,255,255,0.4);
+--shadow-cta-halo:0 0 0 3px rgba(230,120,30,0.5);
+--shadow-cta-halo-soft:0 0 0 3px rgba(230,120,30,0.15);
+--shadow-glass-border:0 0 0 3px rgba(255,255,255,0.3);
+--shadow-stat-ring:inset 0 0 0 4px rgba(255,115,0,0.06);
+--blur-glass:60px;
+--blur-glass-sm:42px;
+--ease-standard:cubic-bezier(.4,0,.2,1); /* @kind other */
+--duration-fast:150ms; /* @kind other */
+--duration-base:250ms /* @kind other */
+}
