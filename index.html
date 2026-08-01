@@ -310,6 +310,23 @@ body.trial-open{overflow:hidden}
 
 <!-- ============ PRICING ============ -->
 <section class="section pricing" id="pricing" aria-labelledby="pricing-h">
+  <svg class="pricing-burst" viewBox="0 0 300 300" fill="none" aria-hidden="true" focusable="false">
+    <g stroke="#FFCDA3" stroke-width="2.5" stroke-linecap="round">
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-8 300 0)" opacity="0.6"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-16 300 0)" opacity="0.65"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-24 300 0)" opacity="0.55"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-32 300 0)" opacity="0.6"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-40 300 0)" opacity="0.5"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-48 300 0)" opacity="0.55"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-56 300 0)" opacity="0.45"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-64 300 0)" opacity="0.5"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-72 300 0)" opacity="0.4"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-80 300 0)" opacity="0.45"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-88 300 0)" opacity="0.35"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-96 300 0)" opacity="0.4"/>
+      <line x1="300" y1="0" x2="300" y2="260" transform="rotate(-104 300 0)" opacity="0.3"/>
+    </g>
+  </svg>
   <div class="heading center reveal">
     <span class="eyebrow">Simple Pricing</span>
     <h2 id="pricing-h">One Price. <span class="accent">Everything Included.</span></h2>
@@ -320,7 +337,7 @@ body.trial-open{overflow:hidden}
       <div class="plan-body">
         <span class="tier">Standard</span>
         <div class="price"><span class="amt">$29</span><span class="per">Per month</span></div>
-        <span class="note">Secure Payment · Flexible Membership</span>
+        <span class="note">Secure Payment - Flexible Membership</span>
         <div class="rule"></div>
         <div class="feats">
           <div class="feat"><span class="fchk"></span><span>Weekday sessions Mon–Fri</span></div>
@@ -342,7 +359,7 @@ body.trial-open{overflow:hidden}
       <div class="plan-body">
         <span class="tier">Premium</span>
         <div class="price"><span class="amt">$39</span><span class="per">Per month</span></div>
-        <span class="note">Secure Payment · Flexible Membership</span>
+        <span class="note">Secure Payment - Flexible Membership</span>
         <div class="rule"></div>
         <div class="feats">
           <div class="feat"><span class="fchk"></span><span>One permanent guest joins every class with you</span></div>
@@ -507,7 +524,7 @@ body.trial-open{overflow:hidden}
 (function(){
   var vals=document.querySelectorAll('.stat .value[data-count]');
   if(!vals.length)return;
-  if(matchMedia('(prefers-reduced-motion:reduce)').matches||!('IntersectionObserver'in window))return;
+  if(!('IntersectionObserver'in window))return;
   var io=new IntersectionObserver(function(entries){
     entries.forEach(function(en){
       if(!en.isIntersecting)return;
@@ -527,17 +544,16 @@ body.trial-open{overflow:hidden}
   var vp=document.getElementById('featViewport'),track=document.getElementById('featuresTrack');
   if(!vp||!track)return;
   var prev=document.getElementById('featPrev'),next=document.getElementById('featNext');
-  var reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
   function step(){var c=track.querySelector('.feature');return c?c.getBoundingClientRect().width+24:360}
   function sync(){
     var maxL=vp.scrollWidth-vp.clientWidth-1;
     prev.disabled=vp.scrollLeft<=1;
     next.disabled=vp.scrollLeft>=maxL;
   }
-  var anim=null;
+  var anim=null,wheelTarget=null;
   function easeOutQuint(t){return 1-Math.pow(1-t,5)}
   function glide(delta){
-    if(reduce){vp.scrollLeft+=delta;sync();return}
+    wheelTarget=null;
     if(anim)cancelAnimationFrame(anim);
     var start=vp.scrollLeft,max=vp.scrollWidth-vp.clientWidth;
     var target=Math.max(0,Math.min(max,start+delta)),dist=target-start,t0=null,dur=900;
@@ -546,11 +562,35 @@ body.trial-open{overflow:hidden}
       vp.scrollLeft=start+dist*easeOutQuint(p);
       sync();
       if(p<1)anim=requestAnimationFrame(frame);
+      else anim=null;
     }
     anim=requestAnimationFrame(frame);
   }
+  function glideToTarget(){
+    var diff=wheelTarget-vp.scrollLeft;
+    if(Math.abs(diff)<0.5){
+      vp.scrollLeft=wheelTarget;
+      sync();
+      anim=null;wheelTarget=null;
+      return;
+    }
+    vp.scrollLeft+=diff*0.14;
+    sync();
+    anim=requestAnimationFrame(glideToTarget);
+  }
   prev.addEventListener('click',function(){glide(-step())});
   next.addEventListener('click',function(){glide(step())});
+  vp.addEventListener('wheel',function(e){
+    var delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    var max=vp.scrollWidth-vp.clientWidth;
+    var base=wheelTarget===null?vp.scrollLeft:wheelTarget;
+    var atStart=base<=0,atEnd=base>=max-1;
+    if((delta<0&&atStart)||(delta>0&&atEnd))return;
+    e.preventDefault();
+    wheelTarget=Math.max(0,Math.min(max,base+delta));
+    if(anim)cancelAnimationFrame(anim);
+    anim=requestAnimationFrame(glideToTarget);
+  },{passive:false});
   vp.addEventListener('scroll',function(){requestAnimationFrame(sync)},{passive:true});
   window.addEventListener('resize',sync);
   sync();
