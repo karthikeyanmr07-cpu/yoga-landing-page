@@ -420,15 +420,15 @@ h1,h2,h3,h4,p{margin:0;text-wrap:pretty}
   :root{--section-padding-x:var(--section-padding-x-mobile)}
   .section,.section--pad-lg{padding:48px var(--section-padding-x)}
   .breathe{padding:48px var(--section-padding-x)}
-  .nav{padding:14px 20px}
-  .nav img{height:28px}
-  .nav .btn{padding:12px 20px;font-size:14px}
+  .nav{padding:12px 16px}
+  .nav img{height:24px}
+  .nav .btn{padding:9px 16px;font-size:13px}
   .hero{min-height:560px;padding:18px 18px 40px;border-radius:0 0 28px 28px}
   .hero-copy{max-width:100%}
   .hero-copy p{max-width:100%}
   .hero-rating{display:none}
-  .hero-dots{display:none}
-  .hero-copy .btn{align-self:stretch;text-align:center}
+  .hero-dots{bottom:16px}
+  .hero-copy .btn{align-self:flex-start;text-align:left}
   .stats{flex-direction:column;padding:30px 32px;gap:26px;width:100%;max-width:420px}
   .stat{padding:0}
   .stat:hover{transform:none}
@@ -466,7 +466,7 @@ h1,h2,h3,h4,p{margin:0;text-wrap:pretty}
   .section,.section--pad-lg{padding:40px var(--section-padding-x)}
   .badge,.check span:last-child{font-size:15px}
   .btn--lg{padding:16px 28px;font-size:17px}
-  .hero-copy .btn,.why-main .btn,.notapp .btn{align-self:stretch;text-align:center}
+  .why-main .btn,.notapp .btn{align-self:stretch;text-align:center}
   .video .frame{height:220px}
   .play span{width:70px;height:70px;font-size:26px}
   .feature{width:82vw;flex:0 0 82vw}
